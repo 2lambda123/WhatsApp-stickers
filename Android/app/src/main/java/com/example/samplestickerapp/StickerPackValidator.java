@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 
 import com.facebook.animated.webp.WebPImage;
 import com.facebook.imagepipeline.common.ImageDecodeOptions;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -190,7 +192,7 @@ class StickerPackValidator {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isValidWebsiteUrl(String websiteUrl) throws IllegalStateException {
         try {
-            new URL(websiteUrl);
+            Urls.create(websiteUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         } catch (MalformedURLException e) {
             Log.e("StickerPackValidator", "url: " + websiteUrl + " is malformed");
             throw new IllegalStateException("url: " + websiteUrl + " is malformed", e);
@@ -202,7 +204,7 @@ class StickerPackValidator {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isURLInCorrectDomain(String urlString, String domain) throws IllegalStateException {
         try {
-            URL url = new URL(urlString);
+            URL url = Urls.create(urlString, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             if (domain.equals(url.getHost())) {
                 return true;
             }
